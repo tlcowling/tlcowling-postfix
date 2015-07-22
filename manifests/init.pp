@@ -7,12 +7,12 @@
 # Document parameters here.
 #
 # [*ensure*]
-#   Used as the standard parameter for package, e.g. present, absent, installed
-#   Passed to the postfix package, default: present
+#  Used as the standard parameter for package, e.g. present, absent, installed
+#  Passed to the postfix package, default: present
 # [*version*]
-#   The version of postfix to install, default: latest
+#  The version of postfix to install, default: latest
 # [*port*]
-#   Specify the TCP port to run your server on, default: 25
+#  Specify the TCP port to run your server on, default: 25
 #
 # === Variables
 #

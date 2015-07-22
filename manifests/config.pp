@@ -6,5 +6,5 @@ class postfix::config {
 
   include postfix::params
 
-  ensure_resource('user', 'postfix', { 'ensure' => 'present' }) 
+  ensure_resource('user', 'postfix', { 'ensure' => 'present' })
 }

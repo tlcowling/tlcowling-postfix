@@ -7,20 +7,23 @@ class postfix::install {
 
   case $::osfamily {
     'Debian': {
-       if ($postfix::version and $postfix::ensure != 'absent') {
-         package { 'postfix':
-           ensure => $postfix::version
-         }
-       } else {
-         package { 'postfix':
-           ensure => $postfix::ensure
-         }
-       }
+      if ($postfix::version and $postfix::ensure != 'absent') {
+        package { 'postfix':
+          ensure => $postfix::version
+        }
+      } else {
+        package { 'postfix':
+          ensure => $postfix::ensure
+        }
+      }
     }
     'RedHat': {
       package {'postfix':
         ensure => $postfix::version
       }
+    }
+    default: {
+      fail('OS not supported')
     }
   }
 }

@@ -11,8 +11,11 @@ class postfix::service (
 ) {
   case $::osfamily {
     'Debian': {
-       $hasstatus  = true
-       $hasrestart = true
+      $hasstatus  = true
+      $hasrestart = true
+    }
+    default: {
+      fail('Unsupported OS')
     }
   }
 
@@ -20,8 +23,10 @@ class postfix::service (
     ensure  => present,
     force   => true,
     content => 'test',
-    notify  => Service['postfix']   
+    notify  => Service['postfix']
   }
+
+  $provider    = undef
 
   service { 'postfix':
     ensure     => $service_state,
