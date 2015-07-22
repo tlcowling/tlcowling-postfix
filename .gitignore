@@ -2,3 +2,7 @@
 
 # dont add the dependencies we bring in for tests
 spec/fixtures/modules
+
+# dont include packaged puppet modules in the repo
+pkg
+

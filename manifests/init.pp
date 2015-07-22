@@ -6,6 +6,11 @@
 #
 # Document parameters here.
 #
+# [*ensure*]
+#   Used as the standard parameter for package, e.g. present, absent, installed
+#   Passed to the postfix package, default: present
+# [*version*]
+#   The version of postfix to install, default: latest
 # [*port*]
 #   Specify the TCP port to run your server on, default: 25
 #
@@ -36,10 +41,14 @@
 # Copyright 2015 Tom Cowling, unless otherwise noted.
 #
 class postfix (
+  $ensure  = $postfix::params::ensure,
   $version = $postfix::params::version,
   $port    = $postfix::params::port
 ) inherits postfix::params {
   validate_string($version)
-  class { 'postfix::install': }
+
+  class { 'postfix::install': } ->
+  class { 'postfix::config': } ~>
+  class { 'postfix::service': }
 
 }

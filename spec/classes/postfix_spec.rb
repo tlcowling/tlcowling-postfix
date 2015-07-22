@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'postfix', :type => :class do
 
-  ['Debian'].each do |osfamily|
+  ['Debian', 'RedHat'].each do |osfamily|
     context "on #{osfamily}" do
       if osfamily == 'Debian'
         let(:facts) { 
@@ -18,6 +18,7 @@ describe 'postfix', :type => :class do
 
         it { is_expected.to contain_class("postfix::params") }
         it { is_expected.to contain_package("postfix") }
+        it { is_expected.to contain_service("postfix") }
       end
     end
   end

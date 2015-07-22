@@ -17,5 +17,10 @@ class postfix::install {
          }
        }
     }
+    'RedHat': {
+      package {'postfix':
+        ensure => $postfix::version
+      }
+    }
   }
 }
