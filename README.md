@@ -1,4 +1,4 @@
-# Puppet Postfix
+# Puppet Postfix [![Build Status](https://travis-ci.org/tlcowling/tlcowling-postfix.svg?branch=master)](https://travis-ci.org/tlcowling/tlcowling-postfix)
 Puppet module to manage Postfix on various UNIXes
 
 #### Table of Contents

@@ -8,8 +8,15 @@ class postfix::install {
   case $::osfamily {
     'Debian': {
       if ($postfix::version and $postfix::ensure != 'absent') {
+        file { 'postfix preseed':
+          ensure  => present,
+          path    => '/tmp/postfix.preseed',
+          content => 'postfix postfix/main_mailer_type    select  No configuration',
+        }
         package { 'postfix':
-          ensure => $postfix::version
+          ensure       => $postfix::version,
+          responsefile => '/tmp/postfix.preseed',
+          require      => File['postfix preseed'],
         }
       } else {
         package { 'postfix':

@@ -1,0 +1,6 @@
+---
+postfix:
+  config:
+    soft_bounce: 'no'
+  service:
+    enable: false

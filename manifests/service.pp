@@ -6,7 +6,7 @@
 #
 class postfix::service (
   $service_name   = $postfix::service_name,
-  $service_enable = $postfix::service_enable,
+  $enable         = $postfix::service_enable,
   $service_state  = $postfix::service_state
 ) {
   case $::osfamily {
@@ -31,7 +31,7 @@ class postfix::service (
   service { 'postfix':
     ensure     => $service_state,
     name       => $service_name,
-    enable     => $service_enable,
+    enable     => $enable,
     hasstatus  => $hasstatus,
     hasrestart => $hasrestart,
     provider   => $provider

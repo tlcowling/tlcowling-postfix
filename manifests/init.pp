@@ -45,10 +45,10 @@ class postfix (
   $version = $postfix::params::version,
   $port    = $postfix::params::port
 ) inherits postfix::params {
-  validate_string($version)
 
-  class { 'postfix::install': } ->
-  class { 'postfix::config': } ~>
-  class { 'postfix::service': }
-
+  # hiera autolayout will be used
+  $config = hiera('postfix')
+  validate_hash($config)
+  notice($config)
+  create_resources('class', $config)
 }
