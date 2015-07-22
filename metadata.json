@@ -1,0 +1,14 @@
+{
+  "name": "user-module",
+  "version": "0.1.0",
+  "author": "Tom Cowling <tom.cowling@gmail.com>",
+  "summary": "Installs and configures Postfix mailserver",
+  "license": "MIT",
+  "source": "https://www.github.com/tlcowling/puppet-postfix",
+  "project_page": "https://www.github.com/tlcowling/puppet-postfix",
+  "issues_url": "https://www.github.com/tlcowling/puppet-postfix/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+

@@ -1,0 +1,4 @@
+.vagrant
+
+# dont add the dependencies we bring in for tests
+spec/fixtures/modules
