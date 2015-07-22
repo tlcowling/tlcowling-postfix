@@ -27,6 +27,9 @@ Centos 6, 7
 
 with Puppet 3.1+
 
+and Ruby versions:
+1.9.3 - 2.2.2 
+
 ## Module Description
 
 Postfix is the de facto standard for mail servers.  Use this module to configure postfix on your
