@@ -1,10 +1,7 @@
-# == Class: postfix::config
+# == Class: postfix::user
 #
-# Creates a postfix user
+# Creates the postfix user
 #
-class postfix::config {
-
-  include postfix::params
-
+class postfix::user {
   ensure_resource('user', 'postfix', { 'ensure' => 'present' })
 }

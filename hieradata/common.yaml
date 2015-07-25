@@ -2,5 +2,8 @@
 postfix:
   config:
     soft_bounce: 'no'
+    queue_directory: '/var/spool/postfix'
   service:
     enable: false
+  install:
+    version: 'latest'

@@ -453,13 +453,197 @@
 #    or network patterns, /file/name patterns or type:name tables. When
 #    an SMTP client or server host name or address matches a pattern,
 #    increase the verbose logging level by the amount specified in the
-#    debug_peer_level parameter.:w
+#    debug_peer_level parameter.
 class postfix::config (
-  $soft_bounce = 'alksdjfhbasdf'
+  $filepath                            = '/etc/postfix/main.cf',
+  $soft_bounce                         = undef,
+  $queue_directory                     = undef,
+  $command_directory                   = '/usr/sbin',
+  $daemon_directory                    = '/usr/lib/postfix',
+  $data_directory                      = '/var/lib/postfix',
+  $mail_owner                          = 'postfix',
+  $default_privs                       = 'nobody',
+  $myhostname                          = $hostname,
+  $mydomain                            = $domain,
+  $myorigin                            = undef,
+  $inet_interfaces                     = undef,
+  $proxy_interfaces                    = undef,
+  $mydestination                       = undef,
+  $local_recipient_maps                = undef,
+  $unknown_local_recipient_reject_code = 550,
+  $mynetworks_style                    = undef,
+  $mynetworks                          = undef,
+  $relay_domains                       = $mydestination,
+  $relayhost                           = $mydomain,
+  $relay_recipient_maps                = undef,
+  $in_flow_delay                       = '1s',
+  $alias_maps                          = undef,
+  $alias_database                      = undef,
+  $recipient_delimeter                 = '+',
+  $home_mailbox                        = 'Mailbox',
+  $mail_spool_directory                = '/var/spool/mail',
+  $mailbox_command                     = undef,
+  $mailbox_transport                   = undef,
+  $fallback_transport                  = undef,
+  $luser_relay                         = undef,
+  $header_checks                       = 'regexp:/etc/postfix/header_checks',
+  $fast_flush_domains                  = undef,
+  $smtpd_banner                        = "$myhostname ESMPT $mail_name ${osfamily}"
 ) {
-  file { '/tmp/test':
+
+  if ($smtpd_banner) {
+    #validate_re($smtpd_banner, '^($myhostname)', "The smtpd_banner: ${smtpd_banner} is missing the RFC required hostname")
+  }
+
+  validate_re($soft_bounce, '^(yes|no)$',
+    "${soft_bounce} is not supported for soft_bounce. Allowed values are 'yes' and 'no'.")
+  # conditional on non definition of mynetworks
+  if($mynetworks_style) {
+    validate_re($mynetworks_style, '^(class|subnet|host)$',
+    "${mynetworks_style} is not supported for mynetworks_style. Allowed values are 'class', 'subnet' and 'host'")
+  } 
+
+  if ($mynetworks_style and $mynetworks) {
+     notice("You have specified both $mynetworks_style and $mynetworks so postfix will ignore $mynetworks_style")
+  } 
+  
+  validate_absolute_path($filepath)
+  validate_absolute_path($queue_directory)
+  validate_absolute_path($command_directory)
+  validate_absolute_path($daemon_directory)
+  validate_absolute_path($data_directory)
+
+  validate_string($mail_owner)
+  validate_string($default_privs)
+
+  validate_string($myhostname)
+  validate_string($mydomain)
+
+  concat { $filepath:
     ensure  => present,
     mode    => '0644',
-    content => $soft_bounce
+    notify  => Class['Postfix::Service'],
+    require => Class['postfix'],
   }   
+
+  concat::fragment { 'postfix config header':
+    ensure  => present,
+    content => template('postfix/header.erb'),
+    target  => $filepath,
+    order   => '00',
+  }
+
+  concat::fragment { 'postfix_soft_bounce':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/soft_bounce.erb'),
+  }
+
+  concat::fragment { 'postfix_local_path_information':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/local_path_information.erb'),
+  }
+
+  concat::fragment { 'postfix_queue_and_process_ownership':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/queue_and_process_ownership.erb'),
+  }
+
+  concat::fragment { 'postfix_internet_host_and_domain_names':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/internet_host_and_domain_names.erb'),
+  }
+
+  concat::fragment { 'postfix_sending_mail':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/sending_mail.erb'),
+  }
+
+  concat::fragment { 'postfix_receiving_mail':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/receiving_mail.erb'),
+  }
+
+  concat::fragment { 'postfix_rejecting_mail_for_unknown_local_users':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/rejecting_mail_for_unknown_local_users.erb'),
+  }
+
+  concat::fragment { 'postfix_trust_and_relay_control':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/trust_and_relay_control.erb'),
+  }
+
+  concat::fragment { 'postfix_internet_or_intranet':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/internet_or_intranet.erb'),
+  }
+
+  concat::fragment { 'postfix_rejecting_unknown_relay_users':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/rejecting_unknown_relay_users.erb'),
+  }
+
+  concat::fragment { 'postfix_input_rate_control':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/input_rate_control.erb'),
+  }
+
+  concat::fragment { 'postfix_alias_database':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/alias_database.erb'),
+  }
+
+  concat::fragment { 'postfix_address_extensions':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/address_extensions.erb'),
+  }
+
+  concat::fragment { 'postfix_delivery_to_mailbox':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/delivery_to_mailbox.erb'),
+  }
+
+  concat::fragment { 'postfix_junk_mail_controls':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/junk_mail_controls.erb'),
+  }
+
+  concat::fragment { 'postfix_fast_etrn_service':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/fast_etrn_service.erb'),
+  }
+
+  concat::fragment { 'postfix_show_software_version_or_not':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/show_software_version_or_not.erb'),
+  }
+
+  concat::fragment { 'postfix_parallel_delivery_to_the_same_destination':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/parallel_delivery_to_the_same_destination.erb'),
+  }
+
+  concat::fragment { 'postfix_debugging_control':
+    ensure  => present,
+    target  => $filepath,
+    content => template('postfix/debugging_control.erb'),
+  }
 }

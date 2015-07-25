@@ -9,6 +9,9 @@ class postfix::service (
   $enable         = $postfix::service_enable,
   $service_state  = $postfix::service_state
 ) {
+
+  include postfix::user
+
   case $::osfamily {
     'Debian': {
       $hasstatus  = true
@@ -34,6 +37,7 @@ class postfix::service (
     enable     => $enable,
     hasstatus  => $hasstatus,
     hasrestart => $hasrestart,
-    provider   => $provider
+    provider   => $provider,
+    require    => Class['postfix::user']
   }
 }

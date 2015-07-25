@@ -41,12 +41,8 @@
 # Copyright 2015 Tom Cowling, unless otherwise noted.
 #
 class postfix (
-  $ensure  = $postfix::params::ensure,
-  $version = $postfix::params::version,
-  $port    = $postfix::params::port
 ) inherits postfix::params {
 
-  # hiera autolayout will be used
   $config = hiera('postfix')
   validate_hash($config)
   notice($config)
