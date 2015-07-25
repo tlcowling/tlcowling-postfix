@@ -1,2 +1,6 @@
+<%- if @local_destination_concurrency_limit -%>
+
+# PARALLEL DELIVERY TO THE SAME DESTINATION
 local_destination_concurrency_limit = <%= @local_destination_concurrency_limit %>
 default_destination_concurrency_limit = <%= @default_destination_concurrency_limit %>
+<%- end -%>

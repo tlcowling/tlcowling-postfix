@@ -303,15 +303,6 @@
 #    configuration parameter, because alias_maps (see above) may specify
 #    tables that are not necessarily all under control by Postfix.
 #
-#  [*recipient_delimeter*]
-#    The recipient_delimiter parameter specifies the separator between
-#    user names and address extensions (user+foo). See canonical(5),
-#    local(8), relocated(5) and virtual(5) for the effects this has on
-#    aliases, canonical, virtual, relocated and .forward file lookups.
-#    Basically, the software tries user+foo and .forward+foo before
-#    trying user and .forward.
-#    default: +
-#
 #  [*home_mailbox*]
 #    The home_mailbox parameter specifies the optional pathname of a
 #    mailbox file relative to a user's home directory. The default
@@ -455,9 +446,11 @@
 #    increase the verbose logging level by the amount specified in the
 #    debug_peer_level parameter.
 class postfix::config (
+  $myorigin                            = $domain,
+  $mydestination                       = undef,
   $filepath                            = '/etc/postfix/main.cf',
-  $soft_bounce                         = undef,
-  $queue_directory                     = undef,
+  $soft_bounce                         = 'no',
+  $queue_directory                     = '/var/spool/postfix',
   $command_directory                   = '/usr/sbin',
   $daemon_directory                    = '/usr/lib/postfix',
   $data_directory                      = '/var/lib/postfix',
@@ -465,13 +458,13 @@ class postfix::config (
   $default_privs                       = 'nobody',
   $myhostname                          = $hostname,
   $mydomain                            = $domain,
-  $myorigin                            = undef,
-  $inet_interfaces                     = undef,
+  $inet_interfaces                     = 'all',
   $proxy_interfaces                    = undef,
-  $mydestination                       = undef,
   $local_recipient_maps                = undef,
+  $local_destination_concurrency_limit = 2,
+  $default_destination_concurrency_limit = 20,
   $unknown_local_recipient_reject_code = 550,
-  $mynetworks_style                    = undef,
+  $mynetworks_style                    = 'host',
   $mynetworks                          = undef,
   $relay_domains                       = $mydestination,
   $relayhost                           = $mydomain,
@@ -491,6 +484,23 @@ class postfix::config (
   $smtpd_banner                        = "$myhostname ESMPT $mail_name ${osfamily}"
 ) {
 
+  # needs to have postfix
+  include 'postfix'
+
+  # allow user pass in array of data
+  if ($mydestination == undef) {
+    $mydestinations = []
+  } else {
+    $mydestinations = any2array($mydestination)
+  }
+
+  $relay_domains_array  = any2array($relay_domains)
+
+  if ($myorigin == undef) {
+    notice("WARNING: By default, the $myorigin parameter tries to use the domain name of the server, but this machine does not have a domain as accesible via facter ($domain) so we will use the machine hostname") 
+    $myorigin = $hostname
+  }
+
   if ($smtpd_banner) {
     #validate_re($smtpd_banner, '^($myhostname)', "The smtpd_banner: ${smtpd_banner} is missing the RFC required hostname")
   }
@@ -504,7 +514,7 @@ class postfix::config (
   } 
 
   if ($mynetworks_style and $mynetworks) {
-     notice("You have specified both $mynetworks_style and $mynetworks so postfix will ignore $mynetworks_style")
+     notice("You have specified both $mynetworks_style and $mynetworks so postfix will ignore $mynetworks_style and only use $mynetworks which is ${mynetworks}")
   } 
   
   validate_absolute_path($filepath)
@@ -555,30 +565,35 @@ class postfix::config (
     ensure  => present,
     target  => $filepath,
     content => template('postfix/internet_host_and_domain_names.erb'),
+    order   => '01',
   }
 
   concat::fragment { 'postfix_sending_mail':
     ensure  => present,
     target  => $filepath,
     content => template('postfix/sending_mail.erb'),
+    order   => '02',
   }
 
   concat::fragment { 'postfix_receiving_mail':
     ensure  => present,
     target  => $filepath,
     content => template('postfix/receiving_mail.erb'),
+    order   => '03',
   }
 
   concat::fragment { 'postfix_rejecting_mail_for_unknown_local_users':
     ensure  => present,
     target  => $filepath,
     content => template('postfix/rejecting_mail_for_unknown_local_users.erb'),
+    order   => '05',
   }
 
   concat::fragment { 'postfix_trust_and_relay_control':
     ensure  => present,
     target  => $filepath,
     content => template('postfix/trust_and_relay_control.erb'),
+    order   => '04',
   }
 
   concat::fragment { 'postfix_internet_or_intranet':
@@ -603,12 +618,6 @@ class postfix::config (
     ensure  => present,
     target  => $filepath,
     content => template('postfix/alias_database.erb'),
-  }
-
-  concat::fragment { 'postfix_address_extensions':
-    ensure  => present,
-    target  => $filepath,
-    content => template('postfix/address_extensions.erb'),
   }
 
   concat::fragment { 'postfix_delivery_to_mailbox':

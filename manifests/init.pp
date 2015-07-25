@@ -43,8 +43,19 @@
 class postfix (
 ) inherits postfix::params {
 
-  $config = hiera('postfix')
-  validate_hash($config)
-  notice($config)
-  create_resources('class', $config)
+  class { 'postfix::install':
+    version => $version
+  }
+
+  include postfix::service
+
+  $hiera_config = hiera('postfix', undef)
+  if ($hiera_config) {
+    validate_hash($config)
+    notice("Using hiera config: ${config}")
+    create_resources('class', $config)
+  } else {
+    include 'postfix::config'
+    notice("Not using hiera")
+  }
 }

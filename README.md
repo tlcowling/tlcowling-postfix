@@ -18,8 +18,7 @@ Puppet module to manage Postfix on various UNIXes
 
 ## Overview
 
-This module seeks to install postfix via puppet and allow its configuration to be specified using
-Hiera data. It aims to include all the available options to configure postfix.
+This module seeks to install postfix via puppet and allow its configuration to be specified using hiera data. It aims to include all the available options to configure postfix.
 
 Tested on the following Operating Systems:
 
@@ -49,9 +48,9 @@ For a standard out-of-the-box installation on a stand-alone machine with direct 
 include 'postfix'
 ```
 
-This will install postfix using your facter domain as the domain name.
+This will install postfix using your facter domain as the mail sending address.
 
-If you want to get a particular version to install, use the version parameter. By default this will be 'latest', and whatever you choose must be available from your package repository.
+If you want to install a particular version, use the version parameter. By default this will be 'latest', and whatever you choose must be available from your package repository.
 
 ```puppet
 class { 'postfix':
@@ -59,28 +58,105 @@ class { 'postfix':
 }
 ```
 
-## Usage
+### Configuration
+Configuration can be specified by direct declaration using puppet code or through hiera. 
+
+#### Outbound mail domain name
+```puppet
+class { 'postfix::config':
+  myorigin      => 'domain.name.of.your.choice',
+}
+```
+
+You can specify the full literal string, or the variable name convention as used in the main.cf file, i.e. '$variablename'
+
+Parameters such as $mydestination which can take multiple values can be specified as single values or using an array.
+
+If using hiera, you just need to include a file like this:
+```yaml
+---
+  postfix:
+    config:
+      myorigin: 'domain.name.of.your.choice'
+```
+
+#### Domains to receive mail for
+##### Example 1: Default Setting
+```puppet
+class { 'postfix::config':
+  myorigin      => 'domain.com',
+  mydestination => '$myorigin'
+}
+```
+
+##### Example 2: Domain-wide mail server
+```puppet
+class { 'postfix::config':
+  mydestination => ['$myhostname', 'localhost.$mydomain', 'localhost', '$mydomain'],  
+}
+```
+
+##### Example 3: Host with multiple DNS A Records (hiera)
+```yaml
+---
+  postfix:
+    config:
+      myorigin: 'domain.com'
+      mydestination:
+        - $myhostname
+        - localhost.$myhostname
+        - localhost
+        - $mydomain
+        - www.$mydomain
+        - ftp.$mydomain 
+```
+
+### What clients to relay mail from:
+Either specify mynetworks_style and let postfix manage the list for you, or explicitly define with mynetworks
+
+class { 'postfix::config':
+  mynetworks_style => 'subnet',
+}
+
+class { 'postfix::config':
+  mynetworks => ['127.0.0.0/8', '168.100.189.2/32'],
+}
+
+#### Proxy/NAT external network addresses
+If you run a Postfix server behind a proxy or NAT, you need to configure the proxy_interfaces parameter and specify all the external proxy or NAT addresses that Postfix receives mail on. You may specify symbolic hostnames instead of network addresses.
+
+IMPORTANT: You must specify your proxy/NAT external addresses when your system is a backup MX host for other domains, otherwise mail delivery loops will happen when the primary MX host is down.
+
+##### Host behind NAT box running a backup MX host
+class { 'postfix::config':
+  ...
+  proxy_interfaces = '1.2.3.4'
+  ...
+}
+
+
+### SASL Authentication
+
+### TLS Encryption
+
+### Warning!
 
 This puppet module is designed to manage your postfix configuration and will affect the following:
   - Configuration files and directories (created and written to)
   - WARNING: Configurations that are not managed by Puppet will be purged.
 
-
-To start passing some general parameters, for example what port to run postfix on, set
-```puppet
-class { 'postfix':
-}
-```
-
-
 ## Reference
 
+postfix
 postfix::config
 
 ## Limitations
 
-Currently tested and working on Debian
+Currently tested and working on Debian, Ubuntu
 RedHat Support to come
+Freebsd
+Archlinux (etc)
+Solaris?!
 
 ## Development
 

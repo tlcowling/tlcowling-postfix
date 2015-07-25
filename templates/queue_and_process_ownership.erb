@@ -1,2 +1,6 @@
+<%- if @mail_owner or @default_privs -%>
+
+# QUEUE AND PROCESS OWNERSHIP
 mail_owner = <%= @mail_owner %>
 default_privs = <%= @default_privs %>
+<%- end -%>

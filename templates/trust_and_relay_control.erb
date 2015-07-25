@@ -1,3 +1,10 @@
-mynetworks_style = <%= @my_networks_style %>
+
+# TRUST AND RELAY CONTROL
+<%- if @mynetworks_style -%>
+mynetworks_style = <%= @mynetworks_style %>
+<%- else -%>
 mynetworks       = <%= @mynetworks %>
-relay_domains    = <%= @relay_domains %>
+<%- end -%>
+<%- if @relay_domains_array.is_a? Array -%>
+relay_domains    = <%= @relay_domains_array.join(' ') %>
+<%- end -%>

@@ -1,2 +1,10 @@
+<%- if (@alias_maps or @alias_database) -%>
+
+# ALIAS DATABASE
+<%- end -%>
+<%- if @alias_maps -%>
 alias_maps = <%= @alias_maps %>
+<%- end %>
+<%- if @alias_database -%>
 alias_database = <%= @alias_database %>
+<%- end %>

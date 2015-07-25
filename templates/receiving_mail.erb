@@ -1,3 +1,9 @@
+
+# RECEIVING MAIL
+<%- if @mydestinations.empty? -%>
+mydestination    = $myhostname localhost.$mydomain localhost $mydomain
+<%- else -%>
+mydestination    = <%= @mydestinations.join(' ') %>
+<%- end -%>
 inet_interfaces  = <%= @inet_interfaces %>
 proxy_interfaces = <%= @proxy_interfaces %>
-mydestination    = <%= @mydestination %>

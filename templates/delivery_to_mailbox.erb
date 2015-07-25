@@ -1,6 +1,19 @@
+# DELIVERY TO MAILBOX
+<%- if @home_mailbox -%>
 home_mailbox = <%= @home_mailbox %>
+<%- end -%>
+<%- if @mail_spool_directory -%>
 mail_spool_directory = <%= @mail_spool_directory %>
+<%- end -%>
+<%- if @mailbox_command -%>
 mailbox_command = <%= @mailbox_command %>
+<%- end -%>
+<%- if @mailbox_transport -%>
 mailbox_transport = <%= @mailbox_transport %>
+<%- end -%>
+<%- if @fallback_transport -%>
 fallback_transport = <%= @fallback_transport %>
+<%- end -%>
+<%- if @luser_relay -%>
 luser_relay = <%= @luser_relay %>
+<%- end -%>

@@ -1,3 +1,13 @@
+
+<%- if (@debug_peer_level or @debug_peer_list or @debug_command) -%>
+# DEBUGGING CONTROL
+<%- end -%>
+<%- if @debug_peer_level -%>
 debug_peer_level = <%= @debug_peer_level %>
+<%- end -%>
+<%- if @debug_peer_list -%>
 debug_peer_list  = <%= @debug_peer_list %>
+<%- end -%>
+<%- if @debug_peer_command -%>
 debug_command    = <%= @debugger_command %>
+<%- end -%>
