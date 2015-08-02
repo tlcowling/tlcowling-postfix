@@ -18,22 +18,18 @@ Puppet module to manage Postfix on various UNIXes
 
 ## Overview
 
-This module seeks to install postfix via puppet and allow its configuration to be specified using hiera data. It aims to include all the available options to configure postfix.
+This module seeks to install postfix via puppet and allow its configuration to be specified using hiera data. It aims to include all the available options to configure postfix for the following operating systems:
 
-Tested on the following Operating Systems:
-
-Ubuntu 12.04, 14.04
-Debian 7
-Centos 6, 7
-
-with Puppet 3.1+
-
-and Ruby versions:
-1.9.3 - 2.2.2 
+- Ubuntu 12.04
+- Ubuntu 14.04
+- Debian 7
+- Centos 5
+- Centos 6
+- Centos 7
 
 ## Module Description
 
-Postfix is a for mail server.  Use this module to configure postfix on your
+Postfix is a mail server.  Use this module to configure postfix on your
 server(s) via puppet.
 
 ## Setup

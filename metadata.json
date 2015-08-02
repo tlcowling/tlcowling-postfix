@@ -1,5 +1,5 @@
 {
-  "name": "user-module",
+  "name": "tlcowling-postfix",
   "version": "0.1.0",
   "author": "Tom Cowling <tom.cowling@gmail.com>",
   "summary": "Installs and configures Postfix mailserver",

@@ -501,9 +501,9 @@ class postfix::config (
     $myorigin = $hostname
   }
 
-  if ($smtpd_banner) {
-    #validate_re($smtpd_banner, '^($myhostname)', "The smtpd_banner: ${smtpd_banner} is missing the RFC required hostname")
-  }
+#  if ($smtpd_banner) {
+#    #validate_re($smtpd_banner, '^($myhostname)', "The smtpd_banner: ${smtpd_banner} is missing the RFC required hostname")
+#  }
 
   validate_re($soft_bounce, '^(yes|no)$',
     "${soft_bounce} is not supported for soft_bounce. Allowed values are 'yes' and 'no'.")

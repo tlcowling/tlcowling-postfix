@@ -18,15 +18,8 @@ class postfix::service (
       $hasrestart = true
     }
     default: {
-      fail('Unsupported OS')
+      fail('Currently your OS is not supported by this module!')
     }
-  }
-
-  file { "/etc/default/${service_name}":
-    ensure  => present,
-    force   => true,
-    content => 'test',
-    notify  => Service['postfix']
   }
 
   $provider    = undef

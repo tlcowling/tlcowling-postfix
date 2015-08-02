@@ -1,0 +1,8 @@
+---
+# To use postfix we declare a hash in the yaml that hiera will read
+# For the config class we use 'postfix' and include the params from
+# the postfix::config class.
+postfix:
+  postfix::config:
+    myorigin: test.com
+    mydomain: test.com

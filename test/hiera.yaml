@@ -1,0 +1,7 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /vagrant/test
+:hierarchy:
+  - sample_config

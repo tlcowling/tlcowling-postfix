@@ -51,11 +51,11 @@ class postfix (
 
   $hiera_config = hiera('postfix', undef)
   if ($hiera_config) {
-    validate_hash($config)
-    notice("Using hiera config: ${config}")
-    create_resources('class', $config)
+    validate_hash($hiera_config)
+    notice("Using hiera config: ${hiera_config}")
+    create_resources('class', $hiera_config)
   } else {
     include 'postfix::config'
-    notice("Not using hiera")
+    notice("No postfix variables found in hiera")
   }
 }

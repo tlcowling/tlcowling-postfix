@@ -5,4 +5,9 @@ spec/fixtures/modules
 
 # dont include packaged puppet modules in the repo
 pkg
+modules
+test/modules
 
+# dont include librarian puppet tmp directories
+.librarian
+.tmp
